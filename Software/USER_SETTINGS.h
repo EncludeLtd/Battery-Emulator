@@ -28,13 +28,14 @@
 //#define TESLA_MODEL_SX_BATTERY
 //#define TESLA_MODEL_3Y_BATTERY
 //#define VOLVO_SPA_BATTERY
-//#define TEST_FAKE_BATTERY
+#define TEST_FAKE_BATTERY
 //#define DOUBLE_BATTERY  //Enable this line if you use two identical batteries at the same time (requires DUAL_CAN setup)
 
 /* Select inverter communication protocol. See Wiki for which to use with your inverter: https://github.com/dalathegreat/BYD-Battery-Emulator-For-Gen24/wiki */
 //#define BYD_CAN  //Enable this line to emulate a "BYD Battery-Box Premium HVS" over CAN Bus
 //#define BYD_SMA //Enable this line to emulate a SMA compatible "BYD Battery-Box HVS 10.2KW battery" over CAN bus
-//#define BYD_MODBUS  //Enable this line to emulate a "BYD 11kWh HVM battery" over Modbus RTU
+#define BYD_MODBUS  //Enable this line to emulate a "BYD 11kWh HVM battery" over Modbus RTU -- EK use for Fronius inverters
+//#define LUNA2000_MODBUS  //Enable this line to emulate a "Luna2000 battery" over Modbus RTU
 //#define PYLON_CAN        //Enable this line to emulate a "Pylontech battery" over CAN bus
 //#define SMA_CAN          //Enable this line to emulate a "BYD Battery-Box H 8.9kWh, 7 mod" over CAN bus
 //#define SMA_TRIPOWER_CAN //Enable this line to emulate a "SMA Home Storage battery" over CAN bus
@@ -46,7 +47,8 @@
 //#define HW_STARK
 
 /* Other options */
-//#define DEBUG_VIA_USB  //Enable this line to have the USB port output serial diagnostic data while program runs (WARNING, raises CPU load, do not use for production)
+#define EK_MIN_OUTPUT // Enable to cut down on messages
+#define DEBUG_VIA_USB  //Enable this line to have the USB port output serial diagnostic data while program runs (WARNING, raises CPU load, do not use for production)
 //#define DEBUG_CANFD_DATA    //Enable this line to have the USB port output CAN-FD data while program runs (WARNING, raises CPU load, do not use for production)
 //#define INTERLOCK_REQUIRED  //Nissan LEAF specific setting, if enabled requires both high voltage conenctors to be seated before starting
 //#define CONTACTOR_CONTROL     //Enable this line to have pins 25,32,33 handle automatic precharge/contactor+/contactor- closing sequence
@@ -67,12 +69,12 @@
 //#define FUNCTION_TIME_MEASUREMENT  // Enable this to record execution times and present them in the web UI (WARNING, raises CPU load, do not use for production)
 
 /* MQTT options */
-// #define MQTT  // Enable this line to enable MQTT
-#define MQTT_SERVER "192.168.xxx.yyy"
+#define MQTT  // Enable this line to enable MQTT
+#define MQTT_SERVER "j2ee4cd2.ala.dedicated.aws.emqxcloud.com"
 #define MQTT_PORT 1883
 
 /* Home Assistant options */
-#define HA_AUTODISCOVERY  // Enable this line to send Home Assistant autodiscovery messages. If not enabled manual configuration of Home Assitant is required
+// #define HA_AUTODISCOVERY  // Enable this line to send Home Assistant autodiscovery messages. If not enabled manual configuration of Home Assitant is required
 
 /* Event options*/
 #define DUMMY_EVENT_ENABLED false  //Enable this line to have a dummy event that gets logged to test the interface

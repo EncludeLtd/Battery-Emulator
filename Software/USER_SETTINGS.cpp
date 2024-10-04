@@ -22,9 +22,9 @@ volatile CAN_Configuration can_config = {
 #ifdef WIFI
 
 volatile uint8_t AccessPointEnabled = true;           //Set to either true/false to enable direct wifi access point
-std::string ssid = "REPLACE_WITH_YOUR_SSID";          // Maximum of 63 characters
-std::string password = "REPLACE_WITH_YOUR_PASSWORD";  // Minimum of 8 characters
-const char* ssidAP = "Battery Emulator";  // Maximum of 63 characters, also used for device name on web interface
+std::string ssid = "REPLACE_WITH_YOUR_SSID";          // Maximum of 63 characters;
+std::string password = "REPLACE_WITH_YOUR_PASSWORD";  // Minimum of 8 characters;
+const char* ssidAP = "Battery Emulator";              // Maximum of 63 characters;
 const char* passwordAP = "123456789";  // Minimum of 8 characters; set to NULL if you want the access point to be open
 const uint8_t wifi_channel = 0;        // Set to 0 for automatic channel selection
 
@@ -43,10 +43,10 @@ const char* http_password = "admin";  // password to webserver authentication;
 #endif  // WEBSERVER
 // MQTT
 #ifdef MQTT
-const char* mqtt_user = "REDACTED";      // Set NULL for no username
-const char* mqtt_password = "REDACTED";  // Set NULL for no password
-#endif                                   // USE_MQTT
-#endif                                   // WIFI
+const char* mqtt_user = "RangeTherapy";
+const char* mqtt_password = "look in lastpass";
+#endif  // USE_MQTT
+#endif  // WEBSERVER
 
 /* Charger settings (Optional, when using generator charging) */
 volatile float CHARGER_SET_HV = 384;      // Reasonably appropriate 4.0v per cell charging of a 96s pack

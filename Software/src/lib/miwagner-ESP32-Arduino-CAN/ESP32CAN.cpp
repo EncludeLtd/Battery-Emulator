@@ -13,9 +13,13 @@ int ESP32CAN::CANWriteFrame(const CAN_frame_t* p_frame) {
     tx_ok = (result == 0) ? true : false;
     if (tx_ok == false) {
       #ifdef DEBUG_VIA_USB
+#ifndef TEST_FAKE_BATTERY
       Serial.println("CAN failure! Check wires");
+#endif
       #endif
+#ifndef TEST_FAKE_BATTERY
       set_event(EVENT_CAN_TX_FAILURE, 0);
+#endif
       start_time = millis();
     } else {
       clear_event(EVENT_CAN_TX_FAILURE);
