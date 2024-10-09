@@ -44,7 +44,7 @@ const char* http_password = "admin";  // password to webserver authentication;
 // MQTT
 #ifdef MQTT
 const char* mqtt_user = "RangeTherapy";
-const char* mqtt_password = "look in lastpass";
+const char* mqtt_password = "REDACTED";
 #endif  // USE_MQTT
 #endif  // WEBSERVER
 
