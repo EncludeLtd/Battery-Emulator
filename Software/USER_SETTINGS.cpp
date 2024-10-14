@@ -1,3 +1,4 @@
+#include "../../batteryemulatorpasswords.h"
 #include "USER_SETTINGS.h"
 #include <string>
 #include "src/devboard/hal/hal.h"
@@ -44,7 +45,7 @@ const char* http_password = "admin";  // password to webserver authentication;
 // MQTT
 #ifdef MQTT
 const char* mqtt_user = "RangeTherapy";
-const char* mqtt_password = "REDACTED";
+const char* mqtt_password = EMQX_PASSWORD;
 #endif  // USE_MQTT
 #endif  // WEBSERVER
 
