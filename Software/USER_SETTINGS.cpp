@@ -1,3 +1,4 @@
+#include "../../batteryemulatorpasswords.h"
 #include "USER_SETTINGS.h"
 #include <string>
 #include "USER_SECRETS.h"
