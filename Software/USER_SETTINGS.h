@@ -18,7 +18,7 @@
 //#define KIA_E_GMP_BATTERY
 //#define KIA_HYUNDAI_HYBRID_BATTERY
 //#define MG_5_BATTERY
-#define NISSAN_LEAF_BATTERY
+//#define NISSAN_LEAF_BATTERY
 //#define PYLON_BATTERY
 //#define RJXZS_BMS
 //#define RENAULT_KANGOO_BATTERY
@@ -28,7 +28,7 @@
 //#define TESLA_MODEL_SX_BATTERY
 //#define TESLA_MODEL_3Y_BATTERY
 //#define VOLVO_SPA_BATTERY
-//#define TEST_FAKE_BATTERY
+#define TEST_FAKE_BATTERY
 //#define DOUBLE_BATTERY  //Enable this line if you use two identical batteries at the same time (requires DUAL_CAN setup)
 
 /* Select inverter communication protocol. See Wiki for which to use with your inverter: https://github.com/dalathegreat/BYD-Battery-Emulator-For-Gen24/wiki */
