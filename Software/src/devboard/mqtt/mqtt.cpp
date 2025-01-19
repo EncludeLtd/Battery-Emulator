@@ -580,9 +580,10 @@ bool mqtt_publish(const char* topic, const char* mqtt_msg, bool retain) {
 
   return false;
 }
-
+/* EK removing as already handled
 void mqtt_publish_event (const char* event_level, const char* event_msg){
   static const char* hostname = WiFi.getHostname();
   String event_topic = String("rangetherapy/sensor/alert/") + String(hostname) + "/" + String(event_level);
   mqtt_publish (event_topic.c_str(), event_msg, true);
 }
+*/
