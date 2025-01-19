@@ -15,7 +15,8 @@
 WiFiClient espClient;
 PubSubClient client(espClient);
 char mqtt_msg[MQTT_MSG_BUFFER_SIZE];
-MyTimer publish_global_timer(5000);  //publish timer
+MyTimer publish_global_timer(3600000);  //publish timer - every hour
+MyTimer publish_event_timer(5000);  //publish event timer - every 5 seconds
 MyTimer check_global_timer(800);     // check timmer - low-priority MQTT checks, where responsiveness is not critical.
 
 static String topic_name = "";
@@ -35,7 +36,7 @@ static void publish_events(void);
 
 /** Publish global values and call callbacks for specific modules */
 static void publish_values(void) {
-  publish_events();
+  //publish_events();
   publish_common_info();
   publish_cell_voltages();
 }
@@ -543,9 +544,12 @@ void mqtt_loop(void) {
   if (check_global_timer.elapsed() && WiFi.status() == WL_CONNECTED) {
     if (client.connected()) {
       client.loop();
-      if (publish_global_timer.elapsed())  // Every 5s
+      if (publish_global_timer.elapsed())  
       {
         publish_values();
+      }
+      if (publish_event_timer.elapsed()){
+        publish_events();
       }
     } else {
       if (connected_once)
