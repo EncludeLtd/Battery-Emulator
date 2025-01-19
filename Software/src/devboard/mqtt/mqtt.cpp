@@ -115,6 +115,7 @@ static String generateButtonAutoConfigTopic(const char* subtype) {
 }
 
 #endif  // HA_AUTODISCOVERY
+static std::vector<EventData> order_events;
 
 static std::vector<EventData> order_events;
 

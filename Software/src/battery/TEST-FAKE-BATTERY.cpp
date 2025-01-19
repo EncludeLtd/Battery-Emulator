@@ -49,11 +49,17 @@ void update_values_battery() { /* This function puts fake values onto the parame
 
   datalayer.battery.status.max_charge_power_W = 5000;  // 5kW
 
+<<<<<<< HEAD
   for (int i = 0; i < 97; ++i) {
     datalayer.battery.status.cell_voltages_mV[i] = 3700 + random(-20, 21);
+=======
+  for (int i = 0; i < datalayer.battery.info.number_of_cells; ++i) {
+    datalayer.battery.status.cell_voltages_mV[i] = 3500 + i;
+>>>>>>> b727603 (Test battery increased to 96 cells)
   }
   if (battery_fault_timer.elapsed() == true) { // Every 20s
     datalayer.battery.status.cell_voltages_mV[3] = 3000;
+    datalayer.battery.status.cell_voltages_mV[6] = 2000;
     datalayer.battery.status.temperature_max_dC = 6000;  // 600.0*C
   } else {
     datalayer.battery.status.cell_voltages_mV[3] = 3500;
