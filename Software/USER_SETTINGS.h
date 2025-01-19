@@ -116,6 +116,9 @@
                                        // Users should check the version from which they are updating, as this change \
                                        // may break compatibility with previous versions of MQTT naming.              \
                                        // Please refer to USER_SETTINGS.cpp for configuration options.
+#define MQTT  // Enable this line to enable MQTT
+#define MQTT_SERVER "j2ee4cd2.ala.dedicated.aws.emqxcloud.com"
+#define MQTT_PORT 1883
 
 /* Home Assistant options */
 #define HA_AUTODISCOVERY  // Enable this line to send Home Assistant autodiscovery messages. If not enabled manual configuration of Home Assitant is required

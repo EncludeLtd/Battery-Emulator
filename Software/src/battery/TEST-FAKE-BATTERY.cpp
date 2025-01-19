@@ -2,6 +2,9 @@
 #ifdef TEST_FAKE_BATTERY
 #include "../datalayer/datalayer.h"
 #include "TEST-FAKE-BATTERY.h"
+#include "../devboard/utils/timer.h"
+
+MyTimer battery_fault_timer(20000);
 
 /* Do not change code below unless you are sure what you are doing */
 static unsigned long previousMillis10 = 0;   // will store last time a 10ms CAN Message was send
@@ -49,6 +52,13 @@ void update_values_battery() { /* This function puts fake values onto the parame
   for (int i = 0; i < 97; ++i) {
     datalayer.battery.status.cell_voltages_mV[i] = 3700 + random(-20, 21);
   }
+  if (battery_fault_timer.elapsed() == true) { // Every 20s
+    datalayer.battery.status.cell_voltages_mV[3] = 3000;
+    datalayer.battery.status.temperature_max_dC = 6000;  // 600.0*C
+  } else {
+    datalayer.battery.status.cell_voltages_mV[3] = 3500;
+    datalayer.battery.status.temperature_max_dC = 60;  // 6.0*C
+  }
 
   //Fake that we get CAN messages
   datalayer.battery.status.CAN_battery_still_alive = CAN_STILL_ALIVE;
@@ -66,6 +76,7 @@ void update_values_battery() { /* This function puts fake values onto the parame
   print_units(", Max cell voltage: ", datalayer.battery.status.cell_max_voltage_mV, "mV ");
   print_units(", Min cell voltage: ", datalayer.battery.status.cell_min_voltage_mV, "mV ");
   logging.println("");
+#endif
 #endif
 }
 

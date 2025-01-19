@@ -6,6 +6,7 @@
 
 #include "../../../USER_SETTINGS.h"
 #include "timer.h"
+#include "../mqtt/mqtt.h"
 
 #define EE_NOF_EVENT_ENTRIES 30
 #define EE_EVENT_ENTRY_SIZE sizeof(EVENT_LOG_ENTRY_TYPE)
@@ -574,6 +575,9 @@ static void log_event(EVENTS_ENUM_TYPE event, uint8_t millisrolloverCount, uint3
 
   // We don't need the exact number, it's just for deciding to store or not
   events.nof_logged_events += (events.nof_logged_events < 255) ? 1 : 0;
+
+  // EK 28/8/2024 push the event out
+  mqtt_publish_event (get_event_level_string(event), get_event_message_string(event));
 }
 
 static void print_event_log(void) {

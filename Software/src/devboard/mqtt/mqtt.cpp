@@ -95,19 +95,19 @@ SensorConfig sensorConfigs[] = {
 SensorConfig buttonConfigs[] = {{"BMSRESET", "Reset BMS", "", "", ""}};
 
 static String generateCommonInfoAutoConfigTopic(const char* object_id) {
-  return "homeassistant/sensor/" + topic_name + "/" + String(object_id) + "/config";
+  return "rangetherapy/sensor/" + topic_name + "/" + String(object_id) + "/config";
 }
 
 static String generateCellVoltageAutoConfigTopic(int cell_number, String battery_suffix) {
-  return "homeassistant/sensor/" + topic_name + "/cell_voltage" + battery_suffix + String(cell_number) + "/config";
+  return "rangetherapy/sensor/" + topic_name + "/cell_voltage" + battery_suffix + String(cell_number) + "/config";
 }
 
 static String generateEventsAutoConfigTopic(const char* object_id) {
-  return "homeassistant/sensor/" + topic_name + "/" + String(object_id) + "/config";
+  return "rangetherapy/sensor/" + topic_name + "/" + String(object_id) + "/config";
 }
 
 static String generateButtonTopic(const char* subtype) {
-  return "homeassistant/button/" + topic_name + "/" + String(subtype);
+  return "rangetherapy/button/" + topic_name + "/" + String(subtype);
 }
 
 static String generateButtonAutoConfigTopic(const char* subtype) {
@@ -216,7 +216,6 @@ static void publish_common_info(void) {
   }
 #endif  // HA_AUTODISCOVERY
 }
-
 static void publish_cell_voltages(void) {
 #ifdef HA_AUTODISCOVERY
   static bool mqtt_first_transmission = true;
@@ -569,6 +568,10 @@ void mqtt_loop(void) {
 }
 
 bool mqtt_publish(const char* topic, const char* mqtt_msg, bool retain) {
+  #ifdef DEBUG_VIA_USB
+    Serial.print ("Publish to ");
+    Serial.println (topic);
+  #endif
   if (client.connected() == true) {
     return client.publish(topic, mqtt_msg, retain);
   }
@@ -576,4 +579,10 @@ bool mqtt_publish(const char* topic, const char* mqtt_msg, bool retain) {
     set_event(EVENT_MQTT_DISCONNECT, 0);
 
   return false;
+}
+
+void mqtt_publish_event (const char* event_level, const char* event_msg){
+  static const char* hostname = WiFi.getHostname();
+  String event_topic = String("rangetherapy/sensor/alert/") + String(hostname) + "/" + String(event_level);
+  mqtt_publish (event_topic.c_str(), event_msg, true);
 }
