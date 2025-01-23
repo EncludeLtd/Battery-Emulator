@@ -480,7 +480,12 @@ static bool reconnect() {
   logging.print("Attempting MQTT connection... ");
 #endif                // DEBUG_LOG
   char clientId[64];  // Adjust the size as needed
+#ifdef HW_LILYGO
   snprintf(clientId, sizeof(clientId), "LilyGoClient-%s", WiFi.getHostname());
+#endif // HW_LILYGO
+#ifdef HW_STARK
+  snprintf(clientId, sizeof(clientId), "StarkClient-%s", WiFi.getHostname());
+#endif // HW_STARK
   // Attempt to connect
   if (client.connect(clientId, mqtt_user, mqtt_password)) {
     connected_once = true;
