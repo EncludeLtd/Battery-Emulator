@@ -24,7 +24,7 @@ void print_units(char* header, int value, char* units) {
 }
 
 void update_values_battery() { /* This function puts fake values onto the parameters sent towards the inverter */
-
+  datalayer.battery.status.bms_status = ACTIVE; // EK otherwise we don't get these values
   datalayer.battery.status.real_soc = 5000;  // 50.00%
 
   datalayer.battery.status.soh_pptt = 9900;  // 99.00%
@@ -76,7 +76,6 @@ void update_values_battery() { /* This function puts fake values onto the parame
   print_units(", Max cell voltage: ", datalayer.battery.status.cell_max_voltage_mV, "mV ");
   print_units(", Min cell voltage: ", datalayer.battery.status.cell_min_voltage_mV, "mV ");
   logging.println("");
-#endif
 #endif
 }
 

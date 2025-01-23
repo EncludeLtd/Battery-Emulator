@@ -123,7 +123,7 @@ static void publish_common_info(void) {
 #ifdef HA_AUTODISCOVERY
   static bool mqtt_first_transmission = true;
 #endif  // HA_AUTODISCOVERY
-  static String state_topic = topic_name + "/info";
+  static String state_topic = String("rangetherapy/sensor/") + topic_name + "/info";
 #ifdef HA_AUTODISCOVERY
   if (mqtt_first_transmission == true) {
     mqtt_first_transmission = false;
@@ -221,9 +221,9 @@ static void publish_cell_voltages(void) {
   static bool mqtt_first_transmission = true;
 #endif  // HA_AUTODISCOVERY
   static JsonDocument doc;
-  static String state_topic = topic_name + "/spec_data";
+  static String state_topic = String("rangetherapy/sensor/") + topic_name + "/spec_data"; // EK 20/1/2025
 #ifdef DOUBLE_BATTERY
-  static String state_topic_2 = topic_name + "/spec_data_2";
+  static String state_topic_2 = String("rangetherapy/sensor/") + topic_name + "/spec_data_2"; // EK 20/1/2025
 
 #endif  // DOUBLE_BATTERY
 
@@ -339,7 +339,7 @@ void publish_events() {
 #ifdef HA_AUTODISCOVERY
   static bool mqtt_first_transmission = true;
 #endif  // HA_AUTODISCOVERY
-  static String state_topic = topic_name + "/events";
+  static String state_topic = String("rangetherapy/sensor/") + topic_name + "/events";
 #ifdef HA_AUTODISCOVERY
   if (mqtt_first_transmission == true) {
     mqtt_first_transmission = false;
@@ -444,6 +444,7 @@ static void publish_buttons_discovery(void) {
 #endif  // HA_AUTODISCOVERY
 }
 
+#ifdef HA_AUTODISCOVERY // EK 22/01/2025 not totally convinced this is right
 static void subscribe() {
   for (int i = 0; i < sizeof(buttonConfigs) / sizeof(buttonConfigs[0]); i++) {
     SensorConfig& config = buttonConfigs[i];
@@ -454,6 +455,7 @@ static void subscribe() {
     client.subscribe(topic);
   }
 }
+#endif // HA_AUTODISCOVERY
 
 void mqtt_message_received(char* topic, byte* payload, unsigned int length) {
 #ifdef DEBUG_LOG
@@ -478,7 +480,7 @@ static bool reconnect() {
   logging.print("Attempting MQTT connection... ");
 #endif                // DEBUG_LOG
   char clientId[64];  // Adjust the size as needed
-  snprintf(clientId, sizeof(clientId), "BatteryEmulatorClient-%s", WiFi.getHostname());
+  snprintf(clientId, sizeof(clientId), "LilyGoClient-%s", WiFi.getHostname());
   // Attempt to connect
   if (client.connect(clientId, mqtt_user, mqtt_password)) {
     connected_once = true;
@@ -487,8 +489,8 @@ static bool reconnect() {
     reconnectAttempts = 0;  // Reset attempts on successful connection
 #ifdef HA_AUTODISCOVERY
     publish_buttons_discovery();
-#endif
     subscribe();
+#endif
 #ifdef DEBUG_LOG
     logging.println("connected");
 #endif  // DEBUG_LOG
@@ -579,10 +581,4 @@ bool mqtt_publish(const char* topic, const char* mqtt_msg, bool retain) {
     set_event(EVENT_MQTT_DISCONNECT, 0);
 
   return false;
-}
-
-void mqtt_publish_event (const char* event_level, const char* event_msg){
-  static const char* hostname = WiFi.getHostname();
-  String event_topic = String("rangetherapy/sensor/alert/") + String(hostname) + "/" + String(event_level);
-  mqtt_publish (event_topic.c_str(), event_msg, true);
 }
