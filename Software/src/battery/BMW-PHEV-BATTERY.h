@@ -1,5 +1,5 @@
-#ifndef BMW_IX_BATTERY_H
-#define BMW_IX_BATTERY_H
+#ifndef BMW_PHEV_BATTERY_H
+#define BMW_PHEV_BATTERY_H
 #include <Arduino.h>
 #include "../include.h"
 
@@ -15,7 +15,7 @@
 #define MAX_CHARGE_POWER_WHEN_TOPBALANCING_W 500
 #define RAMPDOWN_SOC 9000  // (90.00) SOC% to start ramping down from max charge power towards 0 at 100.00%
 #define STALE_PERIOD_CONFIG \
-  400000;  //Number of milliseconds before critical values are classed as stale/stuck 300000 = 400 seconds
+  3600000;  //Number of milliseconds before critical values are classed as stale/stuck 1800000 = 3600 seconds / 60mins
 void setup_battery(void);
 void transmit_can_frame(CAN_frame* tx_frame, int interface);
 

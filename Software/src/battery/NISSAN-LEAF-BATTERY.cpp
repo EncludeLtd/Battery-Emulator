@@ -202,7 +202,11 @@ void update_values_battery() { /* This function maps all the values fetched via 
   datalayer.battery.status.current_dA =
       (battery_Current2 * 5);  //0.5A/bit, multiply by 5 to get Amp+1decimal (5,5A = 11)
 
-  datalayer.battery.info.total_capacity_Wh = (battery_Max_GIDS * WH_PER_GID);
+  if (battery_Max_GIDS == 273) {  //battery_Max_GIDS is stuck at 273 on ZE0
+    datalayer.battery.info.total_capacity_Wh = ((battery_Max_GIDS * WH_PER_GID * battery_StateOfHealth) / 100);
+  } else {  //battery_Max_GIDS updates on newer generations, making for a total_capacity_Wh value that makes sense
+    datalayer.battery.info.total_capacity_Wh = (battery_Max_GIDS * WH_PER_GID);
+  }
 
   datalayer.battery.status.remaining_capacity_Wh = battery_Wh_Remaining;
 
@@ -236,6 +240,11 @@ void update_values_battery() { /* This function maps all the values fetched via 
   datalayer.battery.status.max_discharge_power_W = (battery_Discharge_Power_Limit * 1000);  //kW to W
 
   datalayer.battery.status.max_charge_power_W = (battery_Charge_Power_Limit * 1000);  //kW to W
+
+  //Allow contactors to close
+  if (battery_can_alive) {
+    datalayer.system.status.battery_allows_contactor_closing = true;
+  }
 
   /*Extra safety functions below*/
   if (battery_GIDS < 10)  //700Wh left in battery!
@@ -376,7 +385,11 @@ void update_values_battery2() {  // Handle the values coming in from battery #2
   datalayer.battery2.status.current_dA =
       (battery2_Current2 * 5);  //0.5A/bit, multiply by 5 to get Amp+1decimal (5,5A = 11)
 
-  datalayer.battery2.info.total_capacity_Wh = (battery2_Max_GIDS * WH_PER_GID);
+  if (battery2_Max_GIDS == 273) {  //battery2_Max_GIDS is stuck at 273 on 24kWh packs
+    datalayer.battery2.info.total_capacity_Wh = ((battery2_Max_GIDS * WH_PER_GID * battery2_StateOfHealth) / 100);
+  } else {  //battery_Max_GIDS updates on newer generations, making for a total_capacity_Wh value that makes sense
+    datalayer.battery2.info.total_capacity_Wh = (battery2_Max_GIDS * WH_PER_GID);
+  }
 
   datalayer.battery2.status.remaining_capacity_Wh = battery2_Wh_Remaining;
 
@@ -766,11 +779,6 @@ void handle_incoming_can_frame_battery(CAN_frame rx_frame) {
       battery_Relay_Cut_Request = ((rx_frame.data.u8[1] & 0x18) >> 3);
       battery_Failsafe_Status = (rx_frame.data.u8[1] & 0x07);
       battery_MainRelayOn_flag = (bool)((rx_frame.data.u8[3] & 0x20) >> 5);
-      if (battery_MainRelayOn_flag) {
-        datalayer.system.status.battery_allows_contactor_closing = true;
-      } else {
-        datalayer.system.status.battery_allows_contactor_closing = false;
-      }
       battery_Full_CHARGE_flag = (bool)((rx_frame.data.u8[3] & 0x10) >> 4);
       battery_Interlock = (bool)((rx_frame.data.u8[3] & 0x08) >> 3);
       break;
@@ -1064,9 +1072,19 @@ void handle_incoming_can_frame_battery(CAN_frame rx_frame) {
   }
 }
 void transmit_can_battery() {
-  if (battery_can_alive) {
 
-    unsigned long currentMillis = millis();
+  unsigned long currentMillis = millis();
+
+  if (datalayer.system.status.BMS_reset_in_progress) {
+    // Transmitting towards battery is halted while BMS is being reset
+    // Reset sending counters to avoid overrun messages when reset is over
+    previousMillis10 = currentMillis;
+    previousMillis100 = currentMillis;
+    previousMillis10s = currentMillis;
+    return;
+  }
+
+  if (battery_can_alive) {
 
     //Send 10ms message
     if (currentMillis - previousMillis10 >= INTERVAL_10_MS) {
@@ -1499,7 +1517,6 @@ void decodeChallengeData(unsigned int incomingChallenge, unsigned char* solvedCh
 void setup_battery(void) {  // Performs one time setup at startup
   strncpy(datalayer.system.info.battery_protocol, "Nissan LEAF battery", 63);
   datalayer.system.info.battery_protocol[63] = '\0';
-
   datalayer.battery.info.number_of_cells = 96;
   datalayer.battery.info.max_design_voltage_dV = MAX_PACK_VOLTAGE_DV;
   datalayer.battery.info.min_design_voltage_dV = MIN_PACK_VOLTAGE_DV;
