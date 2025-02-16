@@ -410,11 +410,9 @@ static void publish_buttons_discovery(void) {
 #endif  // HA_AUTODISCOVERY
 }
 
-#ifdef HA_AUTODISCOVERY // EK 22/01/2025 not totally convinced this is right
 static void subscribe() {
   esp_mqtt_client_subscribe(client, (topic_name + "/command/+").c_str(), 1);
 }
-#endif // HA_AUTODISCOVERY
 
 void mqtt_message_received(char* topic, int topic_len, char* data, int data_len) {
 #ifdef DEBUG_LOG

@@ -116,6 +116,7 @@
 
 /* MQTT options */
 // #define MQTT  // Enable this line to enable MQTT
+#define MQTT_QOS 0  // MQTT Quality of Service (0, 1, or 2)
 // #define MQTT_MANUAL_TOPIC_OBJECT_NAME  // Enable this to use custom MQTT topic, object ID prefix, and device name.    \
                                        // WARNING: If this is not defined, the previous default naming format         \
                                        // 'battery-emulator_esp32-XXXXXX' (based on hardware ID) will be used.        \
