@@ -6,7 +6,6 @@
 
 #include "../../../USER_SETTINGS.h"
 #include "timer.h"
-#include "../mqtt/mqtt.h"
 
 #define EE_NOF_EVENT_ENTRIES 30
 #define EE_EVENT_ENTRY_SIZE sizeof(EVENT_LOG_ENTRY_TYPE)
