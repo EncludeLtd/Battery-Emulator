@@ -97,6 +97,10 @@ typedef struct {
 
   /** The current battery status, which for now has the name real_bms_status */
   real_bms_status_enum real_bms_status = BMS_DISCONNECTED;
+
+  /** LED mode, customizable by user */
+  led_mode_enum led_mode = LED_MODE;
+
 } DATALAYER_BATTERY_STATUS_TYPE;
 
 typedef struct {
@@ -123,6 +127,12 @@ typedef struct {
   uint16_t max_user_set_charge_voltage_dV = BATTERY_MAX_CHARGE_VOLTAGE;
   /** The user specified maximum allowed discharge voltage, in deciVolt. 3000 = 300.0 V */
   uint16_t max_user_set_discharge_voltage_dV = BATTERY_MAX_DISCHARGE_VOLTAGE;
+
+  /** Parameters for keeping track of the limiting factor in the system */
+  bool user_settings_limit_discharge = false;
+  bool user_settings_limit_charge = false;
+  bool inverter_limits_discharge = false;
+  bool inverter_limits_charge = false;
 
   /** Tesla specific settings that are edited on the fly when manually forcing a balance charge for LFP chemistry */
   /* Bool for specifying if user has requested manual function */
@@ -212,10 +222,22 @@ typedef struct {
   size_t logged_can_messages_offset = 0;
   /** bool, determines if CAN messages should be logged for webserver */
   bool can_logging_active = false;
+  /** uint8_t, enumeration which CAN interface should be used for log playback */
+  uint8_t can_replay_interface = CAN_NATIVE;
+  /** bool, determines if CAN replay should loop or not */
+  bool loop_playback = false;
+  /** bool, Native CAN failed to send flag */
+  bool can_native_send_fail = false;
+  /** bool, MCP2515 CAN failed to send flag */
+  bool can_2515_send_fail = false;
+  /** uint16_t, MCP2518 CANFD failed to send flag */
+  bool can_2518_send_fail = false;
 
 } DATALAYER_SYSTEM_INFO_TYPE;
 
 typedef struct {
+  /** Millis rollover count. Increments every 49.7 days. Used for keeping track on events */
+  uint8_t millisrolloverCount = 0;
 #ifdef FUNCTION_TIME_MEASUREMENT
   /** Core task measurement variable */
   int64_t core_task_max_us = 0;
@@ -225,8 +247,6 @@ typedef struct {
   int64_t mqtt_task_10s_max_us = 0;
   /** Wifi sub-task measurement variable, reset each 10 seconds */
   int64_t wifi_task_10s_max_us = 0;
-  /** loop() task measurement variable, reset each 10 seconds */
-  int64_t loop_task_10s_max_us = 0;
 
   /** OTA handling function measurement variable */
   int64_t time_ota_us = 0;
@@ -280,6 +300,8 @@ typedef struct {
 #endif
   /** True if the BMS is being reset, by cutting power towards it */
   bool BMS_reset_in_progress = false;
+  /** True if the BMS is starting up */
+  bool BMS_startup_in_progress = false;
 #ifdef PRECHARGE_CONTROL
   /** State of automatic precharge sequence */
   PrechargeState precharge_status = AUTO_PRECHARGE_IDLE;

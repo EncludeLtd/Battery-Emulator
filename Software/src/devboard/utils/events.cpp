@@ -58,29 +58,12 @@ static EVENT_TYPE events;
 static const char* EVENTS_ENUM_TYPE_STRING[] = {EVENTS_ENUM_TYPE(GENERATE_STRING)};
 static const char* EVENTS_LEVEL_TYPE_STRING[] = {EVENTS_LEVEL_TYPE(GENERATE_STRING)};
 
-static uint32_t lastMillis = millis();
-
 /* Local function prototypes */
 static void set_event(EVENTS_ENUM_TYPE event, uint8_t data, bool latched);
 static void update_event_level(void);
 static void update_bms_status(void);
 static void log_event(EVENTS_ENUM_TYPE event, uint8_t millisrolloverCount, uint32_t timestamp, uint8_t data);
 static void print_event_log(void);
-
-uint8_t millisrolloverCount = 0;
-
-/* Exported functions */
-
-/* Main execution function, should handle various continuous functionality */
-void run_event_handling(void) {
-  uint32_t currentMillis = millis();
-  if (currentMillis < lastMillis) {  // Overflow detected
-    millisrolloverCount++;
-  }
-  lastMillis = currentMillis;
-
-  update_event_level();
-}
 
 /* Initialization function */
 void init_events(void) {
@@ -136,7 +119,7 @@ void init_events(void) {
   events.entries[EVENT_CAN_BUFFER_FULL].level = EVENT_LEVEL_WARNING;
   events.entries[EVENT_CAN_OVERRUN].level = EVENT_LEVEL_INFO;
   events.entries[EVENT_CAN_CORRUPTED_WARNING].level = EVENT_LEVEL_WARNING;
-  events.entries[EVENT_CAN_NATIVE_TX_FAILURE].level = EVENT_LEVEL_ERROR;
+  events.entries[EVENT_CAN_NATIVE_TX_FAILURE].level = EVENT_LEVEL_WARNING;
   events.entries[EVENT_CAN_BATTERY_MISSING].level = EVENT_LEVEL_ERROR;
   events.entries[EVENT_CAN_BATTERY2_MISSING].level = EVENT_LEVEL_WARNING;
   events.entries[EVENT_CAN_CHARGER_MISSING].level = EVENT_LEVEL_INFO;
@@ -210,6 +193,7 @@ void init_events(void) {
   events.entries[EVENT_RESET_EFUSE].level = EVENT_LEVEL_INFO;
   events.entries[EVENT_RESET_PWR_GLITCH].level = EVENT_LEVEL_INFO;
   events.entries[EVENT_RESET_CPU_LOCKUP].level = EVENT_LEVEL_WARNING;
+  events.entries[EVENT_RJXZS_LOG].level = EVENT_LEVEL_INFO;
   events.entries[EVENT_PAUSE_BEGIN].level = EVENT_LEVEL_WARNING;
   events.entries[EVENT_PAUSE_END].level = EVENT_LEVEL_INFO;
   events.entries[EVENT_WIFI_CONNECT].level = EVENT_LEVEL_INFO;
@@ -218,6 +202,9 @@ void init_events(void) {
   events.entries[EVENT_MQTT_DISCONNECT].level = EVENT_LEVEL_INFO;
   events.entries[EVENT_EQUIPMENT_STOP].level = EVENT_LEVEL_ERROR;
   events.entries[EVENT_SD_INIT_FAILED].level = EVENT_LEVEL_WARNING;
+  events.entries[EVENT_PERIODIC_BMS_RESET].level = EVENT_LEVEL_INFO;
+  events.entries[EVENT_PERIODIC_BMS_RESET_AT_INIT_SUCCESS].level = EVENT_LEVEL_INFO;
+  events.entries[EVENT_PERIODIC_BMS_RESET_AT_INIT_FAILED].level = EVENT_LEVEL_WARNING;
   events.entries[EVENT_BATTERY_TEMP_DEVIATION_HIGH].level = EVENT_LEVEL_WARNING;
 
   events.entries[EVENT_EEPROM_WRITE].log = false;  // Don't log the logger...
@@ -271,9 +258,9 @@ const char* get_event_message_string(EVENTS_ENUM_TYPE event) {
     case EVENT_CANMCP2515_INIT_FAILURE:
       return "CAN-MCP addon initialization failed. Check hardware";
     case EVENT_CANFD_BUFFER_FULL:
-      return "MCP2518FD buffer overflowed. Some CAN messages were not sent. Contact developers.";
+      return "MCP2518FD message failed to send. Buffer full or no one on the bus to ACK the message!";
     case EVENT_CAN_BUFFER_FULL:
-      return "MCP2515 buffer overflowed. Some CAN messages were not sent. Contact developers.";
+      return "MCP2515 message failed to send. Buffer full or no one on the bus to ACK the message!";
     case EVENT_CAN_OVERRUN:
       return "CAN message failed to send within defined time. Contact developers, CPU load might be too high.";
     case EVENT_CAN_CORRUPTED_WARNING:
@@ -434,6 +421,8 @@ const char* get_event_message_string(EVENTS_ENUM_TYPE event) {
       return "The board was reset due to a detected power glitch";
     case EVENT_RESET_CPU_LOCKUP:
       return "The board was reset due to CPU lockup. Inform developers!";
+    case EVENT_RJXZS_LOG:
+      return "Error code active in RJXZS BMS. Clear via their smartphone app!";
     case EVENT_PAUSE_BEGIN:
       return "The emulator is trying to pause the battery.";
     case EVENT_PAUSE_END:
@@ -450,6 +439,13 @@ const char* get_event_message_string(EVENTS_ENUM_TYPE event) {
       return "EQUIPMENT STOP ACTIVATED!!!";
     case EVENT_SD_INIT_FAILED:
       return "SD card initialization failed, check hardware. Power must be removed to reset the SD card.";
+    case EVENT_PERIODIC_BMS_RESET:
+      return "BMS Reset Event Completed.";
+    case EVENT_PERIODIC_BMS_RESET_AT_INIT_SUCCESS:
+      return "Successfully syncronised with the NTP Server. BMS will reset every 24 hours at defined time";
+    case EVENT_PERIODIC_BMS_RESET_AT_INIT_FAILED:
+      return "Failed to syncronise with the NTP Server. BMS will reset every 24 hours from when the emulator was "
+             "powered on";
     default:
       return "";
   }
@@ -497,7 +493,7 @@ static void set_event(EVENTS_ENUM_TYPE event, uint8_t data, bool latched) {
 
   // We should set the event, update event info
   events.entries[event].timestamp = millis();
-  events.entries[event].millisrolloverCount = millisrolloverCount;
+  events.entries[event].millisrolloverCount = datalayer.system.status.millisrolloverCount;
   events.entries[event].data = data;
   // Check if the event is latching
   events.entries[event].state = latched ? EVENT_STATE_ACTIVE_LATCHED : EVENT_STATE_ACTIVE;
@@ -570,8 +566,10 @@ static void log_event(EVENTS_ENUM_TYPE event, uint8_t millisrolloverCount, uint3
   int entry_address = EE_EVENT_ENTRY_START_ADDRESS + EE_EVENT_ENTRY_SIZE * events.event_log_head_index;
 
   // Prepare an event block to write
-  EVENT_LOG_ENTRY_TYPE entry = {
-      .event = event, .millisrolloverCount = millisrolloverCount, .timestamp = timestamp, .data = data};
+  EVENT_LOG_ENTRY_TYPE entry = {.event = event,
+                                .millisrolloverCount = datalayer.system.status.millisrolloverCount,
+                                .timestamp = timestamp,
+                                .data = data};
 
   // Put the event in (what I guess is) the RAM EEPROM mirror, or write buffer
   EEPROM.put(entry_address, entry);
