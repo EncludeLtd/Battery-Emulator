@@ -14,11 +14,11 @@ CANFD_ADDON_MCP2518 = Add-on CAN-FD MCP2518 connected to GPIO pins
 */
 
 volatile CAN_Configuration can_config = {
-    .battery = CAN_NATIVE,   // Which CAN is your battery connected to?
-    .inverter = CAN_NATIVE,  // Which CAN is your inverter connected to? (No need to configure incase you use RS485)
-    .battery_double = CAN_ADDON_MCP2515,  // (OPTIONAL) Which CAN is your second battery connected to?
-    .charger = CAN_NATIVE,                // (OPTIONAL) Which CAN is your charger connected to?
-    .shunt = CAN_NATIVE                   // (OPTIONAL) Which CAN is your shunt connected to?
+    .battery = CANFD_NATIVE,   // Which CAN is your battery connected to?
+    .inverter = CANFD_NATIVE,  // Which CAN is your inverter connected to? (No need to configure incase you use RS485)
+    .battery_double = CANFD_ADDON_MCP2518,  // (OPTIONAL) Which CAN is your second battery connected to?
+    .charger = CANFD_NATIVE,                // (OPTIONAL) Which CAN is your charger connected to?
+    .shunt = CANFD_NATIVE                   // (OPTIONAL) Which CAN is your shunt connected to?
 };
 
 std::string ssid = WIFI_SSID;             // Set in USER_SECRETS.h
