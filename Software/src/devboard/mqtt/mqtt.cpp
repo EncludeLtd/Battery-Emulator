@@ -359,12 +359,14 @@ static bool publish_cell_voltages(void) {
 
       serializeJson(doc, mqtt_msg, sizeof(mqtt_msg));
 
+#ifdef DOUBLE_BATTERY
       if (!mqtt_publish(state_topic_2.c_str(), mqtt_msg, false)) {
 #ifdef DEBUG_LOG
         logging.println("Cell voltage MQTT msg could not be sent");
 #endif  // DEBUG_LOG
         return false;
       }
+#endif
       doc.clear();
     }
   }

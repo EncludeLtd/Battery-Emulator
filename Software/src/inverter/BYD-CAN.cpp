@@ -86,16 +86,6 @@ void BydCanInverter::
   //Temperature min
   BYD_210.data.u8[2] = (datalayer.battery.status.temperature_min_dC >> 8);
   BYD_210.data.u8[3] = (datalayer.battery.status.temperature_min_dC & 0x00FF);
-
-#ifdef DEBUG_LOG
-  if (inverter_name[0] != 0) {
-    logging.print("Detected inverter: ");
-    for (uint8_t i = 0; i < 7; i++) {
-      logging.print((char)inverter_name[i]);
-    }
-    logging.println();
-  }
-#endif
 }
 
 void BydCanInverter::map_can_frame_to_variable(CAN_frame rx_frame) {
@@ -107,7 +97,9 @@ void BydCanInverter::map_can_frame_to_variable(CAN_frame rx_frame) {
         send_initial_data();
       } else {  // We can identify what inverter type we are connected to
         for (uint8_t i = 0; i < 7; i++) {
-          inverter_name[i] = rx_frame.data.u8[i + 1];        }
+          datalayer.system.info.inverter_brand[i] = rx_frame.data.u8[i + 1];
+        }
+        datalayer.system.info.inverter_brand[7] = '\0';
       }
       break;
     case 0x091:
