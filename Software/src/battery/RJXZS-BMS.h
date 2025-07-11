@@ -24,8 +24,8 @@ class RjxzsBms : public CanBattery {
   static const int MAX_CELL_VOLTAGE_MV = 4250;  //Battery is put into emergency stop if one cell goes over this value
   static const int MIN_CELL_VOLTAGE_MV = 2700;  //Battery is put into emergency stop if one cell goes below this value
   static const int MAX_CELL_DEVIATION_MV = 250;
-  static const int MAX_DISCHARGE_POWER_ALLOWED_W = 5000;
-  static const int MAX_CHARGE_POWER_ALLOWED_W = 5000;
+  static const int MAX_DISCHARGE_POWER_ALLOWED_W = 10000; //changed to allow more powerful discharging ES
+  static const int MAX_CHARGE_POWER_ALLOWED_W = 10000; //changed to allow more powerful charging ES
   static const int MAX_CHARGE_POWER_WHEN_TOPBALANCING_W = 500;
   static const int RAMPDOWN_SOC =
       9000;  // (90.00) SOC% to start ramping down from max charge power towards 0 at 100.00%
