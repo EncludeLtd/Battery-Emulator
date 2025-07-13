@@ -4,8 +4,8 @@
 #include "../devboard/utils/events.h"
 #include "../include.h"
 
-#define NUMBER_OF_MODULES 0
-#define BATTERY_TYPE 0x50
+#define NUMBER_OF_MODULES 8
+#define BATTERY_TYPE 0x83
 // If you are having BattVoltFault issues, configure the above values according to wiki page
 // https://github.com/dalathegreat/Battery-Emulator/wiki/Solax-inverters
 
