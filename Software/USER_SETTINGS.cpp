@@ -14,7 +14,7 @@ CANFD_ADDON_MCP2518 = Add-on CAN-FD MCP2518 connected to GPIO pins
 */
 
 volatile CAN_Configuration can_config = {
-    .battery = CANFD_NATIVE,   // Which CAN is your battery connected to?
+    .battery = CAN_NATIVE,   // Which CAN is your battery connected to?
     .inverter = CANFD_NATIVE,  // Which CAN is your inverter connected to? (No need to configure incase you use RS485)
     .battery_double = CANFD_ADDON_MCP2518,  // (OPTIONAL) Which CAN is your second battery connected to?
     .charger = CANFD_NATIVE,                // (OPTIONAL) Which CAN is your charger connected to?
