@@ -46,7 +46,7 @@
 //#define AFORE_CAN        //Enable this line to emulate an "Afore battery" over CAN bus
 //#define BYD_CAN  //Enable this line to emulate a "BYD Battery-Box Premium HVS" over CAN Bus
 //#define BYD_KOSTAL_RS485 //Enable this line to emulate a "BYD 11kWh HVM battery" over Kostal RS485
-#define BYD_MODBUS  //Enable this line to emulate a "BYD 11kWh HVM battery" over Modbus RTU -- EK use for Fronius inverters
+//#define BYD_MODBUS  //Enable this line to emulate a "BYD 11kWh HVM battery" over Modbus RTU -- EK use for Fronius inverters
 //#define FOXESS_CAN       //Enable this line to emulate a "HV2600/ECS4100 battery" over CAN bus
 //#define GROWATT_HV_CAN   //Enable this line to emulate a "Growatt High Voltage v1.10 battery" over CAN bus
 //#define GROWATT_LV_CAN   //Enable this line to emulate a "48V Growatt Low Voltage battery" over CAN bus
@@ -58,7 +58,7 @@
 //#define SMA_LV_CAN       //Enable this line to emulate a "SMA Sunny Island 48V battery" over CAN bus
 //#define SMA_TRIPOWER_CAN //Enable this line to emulate a "SMA Home Storage battery" over CAN bus
 //#define SOFAR_CAN        //Enable this line to emulate a "Sofar Energy Storage Inverter High Voltage BMS General Protocol (Extended Frame)" over CAN bus
-//#define SOLAX_CAN        //Enable this line to emulate a "SolaX Triple Power LFP" over CAN bus
+#define SOLAX_CAN        //Enable this line to emulate a "SolaX Triple Power LFP" over CAN bus
 //#define SUNGROW_CAN      //Enable this line to emulate a "Sungrow SBR064" over CAN bus
 //#define SERIAL_LINK_RECEIVER  //Enable this line to receive battery data over RS485 pins from another Lilygo (This LilyGo interfaces with inverter)
 
@@ -131,13 +131,13 @@
 
 /* Battery settings */
 // Predefined total energy capacity of the battery in Watt-hours
-#define BATTERY_WH_MAX 30000
+#define BATTERY_WH_MAX 62000
 // Increases battery life. If true will rescale SOC between the configured min/max-percentage
 #define BATTERY_USE_SCALED_SOC true
 // 8000 = 80.0% , Max percentage the battery will charge to (Inverter gets 100% when reached)
-#define BATTERY_MAXPERCENTAGE 8000
+#define BATTERY_MAXPERCENTAGE 9000
 // 2000 = 20.0% , Min percentage the battery will discharge to (Inverter gets 0% when reached)
-#define BATTERY_MINPERCENTAGE 2000
+#define BATTERY_MINPERCENTAGE 500
 // 500 = 50.0 °C , Max temperature (Will produce a battery overheat event if above)
 #define BATTERY_MAXTEMPERATURE 500
 // -250 = -25.0 °C , Min temperature (Will produce a battery frozen event if below)
