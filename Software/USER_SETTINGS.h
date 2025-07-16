@@ -27,11 +27,11 @@
 //#define KIA_HYUNDAI_HYBRID_BATTERY
 //#define MEB_BATTERY
 //#define MG_5_BATTERY
-#define NISSAN_LEAF_BATTERY
+//#define NISSAN_LEAF_BATTERY
 //#define ORION_BMS
 //#define PYLON_BATTERY
 //#define DALY_BMS
-//#define RJXZS_BMS
+#define RJXZS_BMS
 //#define RANGE_ROVER_PHEV_BATTERY
 //#define RENAULT_KANGOO_BATTERY
 //#define RENAULT_TWIZY_BATTERY
@@ -77,7 +77,7 @@
 
 /* Contactor settings. If you have a battery that does not activate contactors via CAN, configure this section */
 #define PRECHARGE_TIME_MS 500  //Precharge time in milliseconds. Modify to suit your inverter (See wiki for more info)
-#define CONTACTOR_CONTROL     //Enable this line to have the emulator handle automatic precharge/contactor+/contactor- closing sequence (See wiki for pins)
+//#define CONTACTOR_CONTROL     //Enable this line to have the emulator handle automatic precharge/contactor+/contactor- closing sequence (See wiki for pins)
 //#define CONTACTOR_CONTROL_DOUBLE_BATTERY //Enable this line to have the emulator hardware control secondary set of contactors for double battery setups (See wiki for pins)
 //#define PWM_CONTACTOR_CONTROL //Enable this line to use PWM for CONTACTOR_CONTROL, which lowers power consumption and heat generation. CONTACTOR_CONTROL must be enabled.
 //#define NC_CONTACTORS         //Enable this line to control normally closed contactors. CONTACTOR_CONTROL must be enabled for this option. Extremely rare setting!
@@ -143,7 +143,7 @@
 
 /* Battery settings */
 // Predefined total energy capacity of the battery in Watt-hours (updates automatically from battery data when available)
-#define BATTERY_WH_MAX 62000
+#define BATTERY_WH_MAX 68000
 // Increases battery life. If true will rescale SOC between the configured min/max-percentage
 #define BATTERY_USE_SCALED_SOC true
 // 8000 = 80.0% , Max percentage the battery will charge to (Inverter gets 100% when reached)
@@ -151,7 +151,7 @@
 // 2000 = 20.0% , Min percentage the battery will discharge to (Inverter gets 0% when reached)
 #define BATTERY_MINPERCENTAGE 500
 // 500 = 50.0 °C , Max temperature (Will produce a battery overheat event if above)
-#define BATTERY_MAXTEMPERATURE 500
+#define BATTERY_MAXTEMPERATURE 400
 // -250 = -25.0 °C , Min temperature (Will produce a battery frozen event if below)
 #define BATTERY_MINTEMPERATURE -250
 // 150 = 15.0 °C , Max difference between min and max temperature (Will produce a battery temperature deviation event if greater)
